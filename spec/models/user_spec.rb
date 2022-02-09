@@ -41,7 +41,11 @@ RSpec.describe User, type: :model do
         password: "jediway",
         password_confirmation: "jediway"
       )
+      
+      @user.valid?
+      @another_user.valid?
 
+      expect(@user).to be_valid
       expect(@another_user).not_to be_valid
       @user.errors.full_messages
     end
@@ -54,7 +58,7 @@ RSpec.describe User, type: :model do
         password_confirmation: "wiz"
       )
 
-      expect(@user.password).not_to be_valid
+      expect(@user.password.length).to be >= 5
       @user.errors.full_messages
     end
 
@@ -78,12 +82,34 @@ RSpec.describe User, type: :model do
         password_confirmation: "idk"
       )
 
-      expect(@user.name).not_to be_valid
+      expect(@user.name).not_to be(nil)
       @user.errors.full_messages
     end
   end
 
   describe '.authenticate_with_credentials' do
-    # examples for this class method here
+    it "should login with correct credentials" do
+    @user = User.new(
+      name: "Bugs Bunny",
+      email: "bugs@looneytunes.com",
+      password: "whatsupdoc",
+      password_confirmation: "whatsupdoc"
+      )
+    authentication = User.authenticate_with_credentials("bugs@looneytunes.com", "whatsupdoc")
+    expect(authentication).to be == @user
+    end
+
+    it "should login with correct credentials" do
+      @user = User.new(
+        name: "Bugs Bunny",
+        email: "bugs@looneytunes.com",
+        password: "whatsupdoc",
+        password_confirmation: "whatsupdoc"
+        )
+      authentication = User.authenticate_with_credentials(" Bugs@looneytunes.com", "whatsupdoc")
+      expect(authentication).to be == @user
+      end
   end
 end
+
+
